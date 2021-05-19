@@ -1,30 +1,40 @@
 <template>
   <div id="app">
     <nav>
-      <div class="navigation__logo">
-        David's Vue Skills Show - Twooter
-      </div>
-      <div class="navigation__user">
-        {{ user.username }}
+      <router-link to="/" class="route">
+        <div class="navigation__logo">
+          David's Vue Skills Show - Twooter
+        </div>
+      </router-link>
+      <div class="navigation__user" v-if="state.user">
+        {{ state.user.username }}
       </div>
     </nav>
-    <UserProfile />
+    <router-view />
   </div>
 </template>
 
 <script>
-import UserProfile from "./components/UserProfile";
+import { reactive } from "vue";
 
 export default {
   name: "App",
-  components: { UserProfile },
-  data() {
-    return {
+  components: {},
+  setup() {
+    const state = reactive({
       user: {
         username: "__DavidDong"
       }
-    };
+    });
+    return { state };
   }
+  // data() {
+  //   return {
+  //     user: {
+  //       username: "__DavidDong"
+  //     }
+  //   };
+  // }
 };
 </script>
 
@@ -48,6 +58,10 @@ nav {
 .navigation__logo {
   font-weight: bold;
   font-size: 24px;
+  color: white;
+}
+.route {
+  text-decoration: none;
 }
 .navigation__user {
   font-weight: bold;
