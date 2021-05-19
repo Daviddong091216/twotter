@@ -13,22 +13,46 @@
         <strong>Followers: </strong>{{ followers }}
       </div>
       <div class="user-profile__favourite">
-          {{favouritedTwoot}}
+        {{ favouritedTwoot }}
       </div>
-      <form class="user-profile__create-twoot">
-          <label for="newTwoot"><strong>New Twoot</strong></label>
-          <textarea id="newTwoot" rows="4"/>
+      <!-- @submit.prevent="createNewTwoot", event listener -->
+      <!-- :class="{ 'exceed': newTwootCharacterCount > 180 } dynamic class, class conditional -->
+      <form
+        class="user-profile__create-twoot"
+        @submit.prevent="createNewTwoot"
+        :class="{ exceed: newTwootCharacterCount > 180 }"
+      >
+        <label for="newTwoot"
+          ><strong>New Twoot</strong>({{ newTwootCharacterCount }}/180)</label
+        >
+        <!-- v-model form data binding -->
+        <textarea id="newTwoot" rows="4" v-model="newTwootContent" />
+        <div class="user-profile__create-twoot-type">
+          <label for="newTwootType"><strong>Type:</strong></label>
+          <select id="newTwootType" v-model="selectedTwootType">
+            <option
+              v-for="option in twootTypes"
+              :key="option.id"
+              :value="option.value"
+            >
+              {{ option.name }}
+            </option>
+          </select>
+        </div>
+        <button class="button">
+          Twoot!
+        </button>
       </form>
     </div>
     <div class="user-profile__twoots-wrapper">
-        <!-- v-for loop and data passing -->
-         <!-- @favourite="toggleFavourite" capture the emit date -->
+      <!-- v-for loop and data passing -->
+      <!-- @favourite="toggleFavourite" capture the emit date -->
       <TwootItem
         v-for="twoot in user.twoots"
         :key="twoot.id"
         :username="user.username"
         :twoot="twoot"
-        @favourite="toggleFavourite" 
+        @favourite="toggleFavourite"
       />
     </div>
   </div>
@@ -41,8 +65,14 @@ export default {
   components: { TwootItem },
   data() {
     return {
+      newTwootContent: "",
+      selectedTwootType: "instant",
+      twootTypes: [
+        { value: "draft", name: "Draft" },
+        { value: "instant", name: "Instant Twoot" }
+      ],
       followers: 0,
-      favouritedTwoot:"",
+      favouritedTwoot: "",
       user: {
         id: 1,
         username: "_DavidDong",
@@ -67,16 +97,26 @@ export default {
     }
   },
   computed: {
-    fullName() {
-      return `${this.user.firstName} ${this.user.lastName}`;
+    newTwootCharacterCount() {
+      return this.newTwootContent.length;
     }
   },
   methods: {
     followUser() {
       this.followers++;
     },
-    toggleFavourite(id){
-        this.favouritedTwoot=`My favorite twoot's id is ${id}`
+    toggleFavourite(id) {
+      this.favouritedTwoot = `My favorite twoot's id is ${id}`;
+    },
+    createNewTwoot() {
+      if (this.newTwootContent && this.selectedTwootType !== "draft") {
+        this.user.twoots.unshift({
+          id: this.user.twoots.length + 1,
+          content: this.newTwootContent
+        });
+        // clean the textarea
+        this.newTwootContent = "";
+      }
     }
   },
   mounted() {
@@ -85,7 +125,7 @@ export default {
 };
 </script>
 
-<style>
+<style  scoped>
 .user-profile {
   display: grid;
   grid-template-columns: 1fr 3fr;
@@ -112,18 +152,37 @@ export default {
 }
 
 .user-profile__favourite {
-  background:darkgreen;
+  background: darkgreen;
   color: white;
   border-radius: 5px;
   margin-right: auto;
   padding: 0 20px;
- }
-.user-profile__create-twoot{
-    padding-top:20px;
-    display: flex;
-    flex-direction: column;
+}
+.user-profile__twoots-wrapper {
+  display: grid;
+  grid-gap: 10px;
+}
+.user-profile__create-twoot {
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.user-profile__create-twoot-type {
+  margin-top: 20px;
 }
 
+.button {
+  background: darkgreen;
+  color: white;
+  border-radius: 5px;
+  margin-right: auto;
+  margin-top: 20px;
+  padding: 0 20px;
+}
+.exceed {
+  color: red;
+  border-color: red;
+}
 h1 {
   margin: 0;
 }
