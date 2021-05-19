@@ -15,34 +15,8 @@
       <div class="user-profile__favourite">
         {{ favouritedTwoot }}
       </div>
-      <!-- @submit.prevent="createNewTwoot", event listener -->
-      <!-- :class="{ 'exceed': newTwootCharacterCount > 180 } dynamic class, class conditional -->
-      <form
-        class="user-profile__create-twoot"
-        @submit.prevent="createNewTwoot"
-        :class="{ exceed: newTwootCharacterCount > 180 }"
-      >
-        <label for="newTwoot"
-          ><strong>New Twoot</strong>({{ newTwootCharacterCount }}/180)</label
-        >
-        <!-- v-model form data binding -->
-        <textarea id="newTwoot" rows="4" v-model="newTwootContent" />
-        <div class="user-profile__create-twoot-type">
-          <label for="newTwootType"><strong>Type:</strong></label>
-          <select id="newTwootType" v-model="selectedTwootType">
-            <option
-              v-for="option in twootTypes"
-              :key="option.id"
-              :value="option.value"
-            >
-              {{ option.name }}
-            </option>
-          </select>
-        </div>
-        <button class="button">
-          Twoot!
-        </button>
-      </form>
+      <!--  @add-twoot="addNewTwootToTwoots", capture the data from child component-->
+      <CreateTwootPanel @add-twoot="addNewTwootToTwoots"/>
     </div>
     <div class="user-profile__twoots-wrapper">
       <!-- v-for loop and data passing -->
@@ -60,17 +34,12 @@
 
 <script>
 import TwootItem from "./TwootItem";
+import CreateTwootPanel from "./CreatTwootPanel";
 export default {
   name: "UserProfile",
-  components: { TwootItem },
+  components: { TwootItem,CreateTwootPanel },
   data() {
     return {
-      newTwootContent: "",
-      selectedTwootType: "instant",
-      twootTypes: [
-        { value: "draft", name: "Draft" },
-        { value: "instant", name: "Instant Twoot" }
-      ],
       followers: 0,
       favouritedTwoot: "",
       user: {
@@ -96,11 +65,7 @@ export default {
       }
     }
   },
-  computed: {
-    newTwootCharacterCount() {
-      return this.newTwootContent.length;
-    }
-  },
+
   methods: {
     followUser() {
       this.followers++;
@@ -108,16 +73,11 @@ export default {
     toggleFavourite(id) {
       this.favouritedTwoot = `My favorite twoot's id is ${id}`;
     },
-    createNewTwoot() {
-      if (this.newTwootContent && this.selectedTwootType !== "draft") {
-        this.user.twoots.unshift({
-          id: this.user.twoots.length + 1,
-          content: this.newTwootContent
-        });
-        // clean the textarea
-        this.newTwootContent = "";
-      }
+    addNewTwootToTwoots(newTwoot){
+      this.user.twoots.unshift(
+        {id:this.user.twoots.length+1, content:newTwoot})
     }
+
   },
   mounted() {
     this.followUser();
@@ -125,7 +85,7 @@ export default {
 };
 </script>
 
-<style  scoped>
+<style scoped>
 .user-profile {
   display: grid;
   grid-template-columns: 1fr 3fr;
@@ -162,27 +122,8 @@ export default {
   display: grid;
   grid-gap: 10px;
 }
-.user-profile__create-twoot {
-  padding-top: 20px;
-  display: flex;
-  flex-direction: column;
-}
-.user-profile__create-twoot-type {
-  margin-top: 20px;
-}
 
-.button {
-  background: darkgreen;
-  color: white;
-  border-radius: 5px;
-  margin-right: auto;
-  margin-top: 20px;
-  padding: 0 20px;
-}
-.exceed {
-  color: red;
-  border-color: red;
-}
+
 h1 {
   margin: 0;
 }

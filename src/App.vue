@@ -18,13 +18,12 @@ import UserProfile from "./components/UserProfile";
 export default {
   name: "App",
   components: { UserProfile },
-  data(){
-    return{
-      user:{
-        username:'__DavidDong'
+  data() {
+    return {
+      user: {
+        username: "__DavidDong"
       }
-
-    }
+    };
   }
 };
 </script>
@@ -38,21 +37,19 @@ export default {
   min-height: 100vh;
   background-color: #f3f5fa;
 }
-nav{
-  display:flex;
-  align-items:center;
+nav {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding:10px 5%;
+  padding: 10px 5%;
   background-color: darkred;
-  color:white;
-
+  color: white;
 }
-.navigation__logo{
-font-weight: bold;
-font-size: 24px;
+.navigation__logo {
+  font-weight: bold;
+  font-size: 24px;
 }
-.navigation__user{
-font-weight: bold;
-
+.navigation__user {
+  font-weight: bold;
 }
 </style>
